@@ -1,5 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb+srv://hikmetaliyevm:6423857hiko@cluster0.rxlyvx6.mongodb.net/?retryWrites=true&w=majority', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 const messages = [
   {
@@ -22,7 +28,6 @@ router.get('/', function(req, res) {
 router.post('/new', function(req, res) {
   messages.push({text: req.body.messageText, user: req.body.messageUser, added: new Date()});
   res.redirect('/')
-  // req.body.messageText
 })
 
 module.exports = router;
