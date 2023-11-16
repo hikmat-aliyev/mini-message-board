@@ -2,32 +2,35 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://hikmetaliyevm:6423857hiko@cluster0.rxlyvx6.mongodb.net/?retryWrites=true&w=majority', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+mongoose.connect('mongodb+srv://hikmataliyevm:6423857hiko@cluster0.v25lknr.mongodb.net/?retryWrites=true&w=majority');
 
-const messages = [
-  {
-    text: 'Hi dasthere',
-    user: 'Hiko',
-    added: new Date()
-  }, 
-  {
-    text: 'Hello',
-    user: 'Sonic',
-    added: new Date()
-  }
-]
+const messageSchema = new mongoose.Schema({
+  text: String,
+  user: String,
+  added:{ type: Date, default: Date.now }
+})
+
+const Message = mongoose.model('Message', messageSchema);
 
 /* GET home page. */
-router.get('/', function(req, res) {
-  res.render('index', { title: 'Mini message board', messages: messages });
+router.get('/', async function(req, res) {
+  try {
+    const messages = await Message.find();
+    res.render('index', {title: 'Mini message board', messages: messages})
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error');
+  }
 });
 
-router.post('/new', function(req, res) {
-  messages.push({text: req.body.messageText, user: req.body.messageUser, added: new Date()});
-  res.redirect('/')
+router.post('/new', async function(req, res) {
+  try {
+    await Message.create({text: req.body.messageText, user: req.body.messageUser, added: new Date()});
+    res.redirect('/')
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error');
+  }
 })
 
 module.exports = router;
