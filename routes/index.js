@@ -1,13 +1,16 @@
+const { Router } = require('express');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://hikmataliyevm:6423857hiko@cluster0.v25lknr.mongodb.net/?retryWrites=true&w=majority');
+require('dotenv').config()
+
+mongoose.connect(process.env.DB_STRING);
 
 const messageSchema = new mongoose.Schema({
   text: String,
   user: String,
-  added:{ type: Date, default: Date.now }
+  added:{ type: Date }
 })
 
 const Message = mongoose.model('Message', messageSchema);
@@ -31,6 +34,10 @@ router.post('/new', async function(req, res) {
     console.error(error);
     res.status(500).send('Internal server error');
   }
+})
+
+router.get('/new', function(req, res) {
+  res.render('form')
 })
 
 module.exports = router;
